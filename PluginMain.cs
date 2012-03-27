@@ -12,7 +12,7 @@ using System.Reflection;
 
 namespace CustomMonsters
 {
-    [APIVersion(1, 10)]
+    [APIVersion(1, 11)]
     public class CustomMonstersPlugin : TerrariaPlugin
     {
         private static CustomMonsterConfigFile CMConfig { get; set; }
@@ -237,6 +237,7 @@ namespace CustomMonsters
             Custom.boss = CMType.Boss ?? Custom.boss;
             Custom.noGravity = CMType.noGravity ?? Custom.noGravity;
             Custom.noTileCollide = CMType.noTileCollide ?? Custom.noTileCollide;
+
             Custom.value = CMType.Value ?? Custom.value;
             Custom.onFire = CMType.OnFire ?? Custom.onFire;
             Custom.poisoned = CMType.Poisoned ?? Custom.poisoned;
@@ -1090,8 +1091,11 @@ namespace CustomMonsters
                 }
                 lock (CMTypes)
                 {
-                    if (CMType.Name != "" && CMType.BaseType > 0)
+                    if (CMType.Name != "" && CMType.BaseType > 0){
+		    if (CMType.Transformation == null)
+		     CMType.Transformation = new Transformation();
                         CMTypes.Add(CMType);
+			}
                 }
             }
 
