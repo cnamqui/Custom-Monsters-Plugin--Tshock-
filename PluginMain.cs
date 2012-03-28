@@ -207,7 +207,7 @@ namespace CustomMonsters
                     int i = 0;
                     while (i < count)
                     {
-                        SpawnCustomMonster(CMType, (int)args.Player.X, (int)args.Player.Y);
+                        SpawnCustomMonster(CMType, (int)args.Player.X + 48, (int)args.Player.Y);
                         i++;
                     }
                     TShock.Utils.Broadcast(args.Player.Name + " spawned " + count + " " + CMType.Name + "s", Color.Yellow);
@@ -252,7 +252,9 @@ namespace CustomMonsters
             int CID = -1;
             if (modlevel <= CMType.MODMaxLevel)
             {
-                int npcid = NPC.NewNPC(X * 16, Y * 16, CMType.BaseType);
+                int npcid = NPC.NewNPC(X , Y , CMType.BaseType);
+//		Console.WriteLine(String.Format("id is {0} X {1} Y {2} - compare {3} and {4}",npcid,X,Y,Main.npc[1].position.X,Main.npc[1].position.Y));
+		
                 Main.npc[npcid].SetDefaults(CMType.BaseType);
                 CustomizeMonster(npcid, CMType, modlevel);
                 CID = npcid;
