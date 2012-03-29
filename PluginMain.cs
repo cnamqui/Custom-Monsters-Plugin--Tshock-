@@ -220,6 +220,7 @@ namespace CustomMonsters
 
         private static void CMReload(CommandArgs args)
         {
+	    CMTypes.Clear();
             LoadAllCustomMonsters();
         }
         private static void CustomizeMonster(int npcid, CustomMonsterType CMType, int modlevel, int life = -1)
@@ -328,7 +329,7 @@ namespace CustomMonsters
 
         private static void HandleTransFormations()
         {
-            List<CustomMonster> Transformers = CustomMonsters.FindAll(cm => cm.CMType.Transformation.transform);
+            List<CustomMonster> Transformers = CustomMonsters.FindAll(cm => cm.CMType.Transformation != null && cm.CMType.Transformation.transform);
             foreach (CustomMonster CM in Transformers)
             {
                 if (CM.MainNPC.life <= CM.CMType.Transformation.HP)
@@ -479,12 +480,12 @@ namespace CustomMonsters
             List<CustomMonsterType> Hallow = CMTypes.FindAll(cmt => cmt.Hallow.SpawnHere == true);
             List<CustomMonsterType> Forest = CMTypes.FindAll(cmt => cmt.Forest.SpawnHere == true);
 
-            List<CMPlayer> CorruptionPlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneEvil == true);
-            List<CMPlayer> DungeonPlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneDungeon == true);
-            List<CMPlayer> MeteorPlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneMeteor == true);
-            List<CMPlayer> HallowPlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneHoly == true);
-            List<CMPlayer> JunglePlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneJungle == true);
-            List<CMPlayer> ForestPlayers = CMPlayers.FindAll(player => player.TSPlayer.TPlayer.zoneJungle == false && player.TSPlayer.TPlayer.zoneDungeon == false && player.TSPlayer.TPlayer.zoneMeteor == false && player.TSPlayer.TPlayer.zoneEvil == false);
+            List<CMPlayer> CorruptionPlayers = CMPlayers.FindAll(player => player.TSPlayer != null && player.TSPlayer.TPlayer.zoneEvil == true);
+            List<CMPlayer> DungeonPlayers = CMPlayers.FindAll(player => player.TSPlayer != null && player.TSPlayer.TPlayer.zoneDungeon == true);
+            List<CMPlayer> MeteorPlayers = CMPlayers.FindAll(player => player.TSPlayer != null && player.TSPlayer.TPlayer.zoneMeteor == true);
+            List<CMPlayer> HallowPlayers = CMPlayers.FindAll(player => player.TSPlayer != null && player.TSPlayer.TPlayer.zoneHoly == true);
+            List<CMPlayer> JunglePlayers = CMPlayers.FindAll(player => player.TSPlayer != null && player.TSPlayer.TPlayer.zoneJungle == true);
+            List<CMPlayer> ForestPlayers = CMPlayers.FindAll(player => player.TSPlayer != null && (player.TSPlayer.TPlayer.zoneJungle == false && player.TSPlayer.TPlayer.zoneDungeon == false && player.TSPlayer.TPlayer.zoneMeteor == false && player.TSPlayer.TPlayer.zoneEvil == false));
             #region corruption spawn
             if (Corruption.Count>0 && CorruptionPlayers.Count>0)
             {
@@ -702,13 +703,14 @@ namespace CustomMonsters
                     {
                         foreach (NPC npc in cmt.Replaces)
                         {
-                            if (npc.name.ToLower() == Main.npc[i].name.ToLower())
+                            var name = Main.npc[i].name;
+                            if (name != null && npc.name.ToLower() == name.ToLower())
                             {
                                 CustomizeMonster(i, CMType, 0);
                             }
                         }
                     }
-                    if (CMType.Name != "" && CMType.BaseType > 0)
+                    if (CMType.Name != "" && CMType.BaseType != 0)
                         CustomizeMonster(i, CMType, 0);
                 }
                 else
@@ -1099,7 +1101,7 @@ namespace CustomMonsters
                 }
                 lock (CMTypes)
                 {
-                    if (CMType.Name != "" && CMType.BaseType > 0){
+                    if (CMType.Name != "" && CMType.BaseType != 0){
 		    if (CMType.Transformation == null)
 		     CMType.Transformation = new Transformation();
                         CMTypes.Add(CMType);
@@ -1123,20 +1125,33 @@ namespace CustomMonsters
         }
 	private static void RemoveInactive()
 	{
-           for (int i = 0; i < Main.maxNPCs; i++)
-            {
-                if (!Main.npc[i].active)
+              for (int i = 0; i < Main.maxNPCs; i++)
                 {
-		   for (int a = 0 ; a < CustomMonsters.Count ; a++)
-		   {
-			if (CustomMonsters[a].ID==i)
-			{
-		   	CustomMonsters.RemoveAt(a);
-			break;
-			}
-		   }
-		}
-	    }
-	}
-}
+                    if (!Main.npc[i].active)
+                    {
+		                for (int a = 0 ; a < CustomMonsters.Count ; a++)
+		              
+                        {
+			
+                            if (CustomMonsters[a].ID==i)
+			
+                            {
+		   	
+                                CustomMonsters.RemoveAt(a);
+			
+                                break;
+			
+                            }
+		   
+                        }
+		
+                    }
+	    
+              }
+	
+
+        }
+
+    }
+
 }
