@@ -154,6 +154,7 @@ namespace CustomMonsters
             UpdateCAIMonsters();
             SpawnInRegions();
             HandleBuffers();
+	    RemoveInactive();
         }
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
@@ -287,7 +288,7 @@ namespace CustomMonsters
             {
                 foreach (ShooterData sd in shooter.CMType.ShooterData)
                 {
-                    if (((int)(shooter.SpawnTime - DateTime.Now).TotalMilliseconds/100) % (sd.ShootTime) == 0)
+                    if ((((int)(shooter.SpawnTime - DateTime.Now).TotalMilliseconds/100) % (sd.ShootTime) == 0) && (Main.npc[shooter.ID].active))
                     {
                         ShootProjectile(shooter.MainNPC.position.X, shooter.MainNPC.position.Y, sd.ShootStyle, sd.ProjectileDamage, shooter.ID, sd.ProjectileType);
                     }
@@ -331,7 +332,12 @@ namespace CustomMonsters
             foreach (CustomMonster CM in Transformers)
             {
                 if (CM.MainNPC.life <= CM.CMType.Transformation.HP)
+		try {
                     CustomizeMonster(CM.ID, CM.CMType.Transformation.TransToType, 0, CM.MainNPC.life);
+		    }catch (NullReferenceException Z)
+		    {
+		    // TODO: track down this error and fix it for real.
+		    }
             }
         }
 
@@ -1115,5 +1121,22 @@ namespace CustomMonsters
             LoadCustomMonstersFromText();
             SetupConfig();
         }
-    }
+	private static void RemoveInactive()
+	{
+           for (int i = 0; i < Main.maxNPCs; i++)
+            {
+                if (!Main.npc[i].active)
+                {
+		   for (int a = 0 ; a < CustomMonsters.Count ; a++)
+		   {
+			if (CustomMonsters[a].ID==i)
+			{
+		   	CustomMonsters.RemoveAt(a);
+			break;
+			}
+		   }
+		}
+	    }
+	}
+}
 }
