@@ -15,12 +15,12 @@ namespace CustomMonsters
         public int Index { get; set; }
         public TSPlayer TSPlayer { get { return TShock.Players[Index]; } }
         public List<int> NPCIDs { get; set; }
-        public DateTime LastCustomZoneSpawn { get; set; }
+        public long LastCustomZoneSpawn { get; set; }
         public CMPlayer(int index)
         {
             Index = index;
             NPCIDs = new List<int>();
-            LastCustomZoneSpawn = DateTime.Now;
+            LastCustomZoneSpawn = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
         }
     }
 }

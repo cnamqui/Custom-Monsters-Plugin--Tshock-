@@ -159,7 +159,9 @@ namespace CustomMonsters
 
         private void OnGreetPlayer(int who, HandledEventArgs e)
         {
+	lock(CMPlayers){
             CMPlayers.Add(new CMPlayer(who));
+	    }
         }
 
         private void OnLeave(int ply)
@@ -495,10 +497,10 @@ namespace CustomMonsters
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks /TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
                                 lock (Corruption)
                                 {
@@ -509,7 +511,7 @@ namespace CustomMonsters
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -529,10 +531,10 @@ namespace CustomMonsters
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
                                 lock (Hallow)
                                 {
@@ -543,7 +545,7 @@ namespace CustomMonsters
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -563,10 +565,10 @@ namespace CustomMonsters
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
                                 lock (Meteor)
                                 {
@@ -577,7 +579,7 @@ namespace CustomMonsters
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -597,10 +599,10 @@ namespace CustomMonsters
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
                                 lock (Jungle)
                                 {
@@ -611,7 +613,7 @@ namespace CustomMonsters
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -631,10 +633,10 @@ namespace CustomMonsters
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
                                 lock (Dungeon)
                                 {
@@ -645,7 +647,7 @@ namespace CustomMonsters
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -659,27 +661,31 @@ namespace CustomMonsters
             #region Forest spawn
             if (Forest.Count > 0 && ForestPlayers.Count > 0)
             {
+
                 lock (ForestPlayers)
                 {
                     foreach (CMPlayer player in ForestPlayers)
                     {
                         Random mt = new Random();
                         Random mc = new Random();
-                        player.NPCIDs.RemoveAll(id => Main.npc[id].active = false);
+                        player.NPCIDs.RemoveAll(id => Main.npc[id].active == false);
                         if (player.NPCIDs.Count < CMConfig.MaxCustomSpawns)
                         {
-                            if ((player.LastCustomZoneSpawn - DateTime.Now).TotalMilliseconds > CMConfig.CustomSpawnRate)
+                            if ((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - player.LastCustomZoneSpawn > CMConfig.CustomSpawnRate)
                             {
+			
                                 lock (Forest)
                                 {
-                                    CustomMonsterType cmtype = Forest[mt.Next() % Forest.Count];
-                                    if (mc.Next() % cmtype.Forest.Rate == 0)
+			
+                                    CustomMonsterType cmtype = Forest[mt.Next(1, Forest.Count)-1];
+			
+                                    if (mc.Next(0, cmtype.Forest.Rate) == 0)
                                     {
                                         int NPCID = SpawnCustomMonster(cmtype, (int)player.TSPlayer.X, (int)player.TSPlayer.Y);
                                         if (NPCID >= 0)
                                         {
                                             player.NPCIDs.Add(NPCID);
-                                            player.LastCustomZoneSpawn = DateTime.Now;
+                                            player.LastCustomZoneSpawn = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
                                         }
                                     }
                                 }
@@ -706,7 +712,10 @@ namespace CustomMonsters
                             var name = Main.npc[i].name;
                             if (name != null && npc.name.ToLower() == name.ToLower())
                             {
-                                CustomizeMonster(i, CMType, 0);
+
+                                CustomizeMonster(i, cmt, 0);
+//				Main.npc[i].active=true;
+//    				NetMessage.SendData(23, -1, -1, "", i, 0f, 0f, 0f, 0);
                             }
                         }
                     }
@@ -1101,11 +1110,16 @@ namespace CustomMonsters
                 }
                 lock (CMTypes)
                 {
+                   
                     if (CMType.Name != "" && CMType.BaseType != 0){
-		    if (CMType.Transformation == null)
-		     CMType.Transformation = new Transformation();
+		    
+                        if (CMType.Transformation == null)
+		     
+                            CMType.Transformation = new Transformation();
+                        
                         CMTypes.Add(CMType);
-			}
+			
+                    }
                 }
             }
 
