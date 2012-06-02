@@ -8,6 +8,11 @@ using System.ComponentModel;
 using MySql.Data.MySqlClient;
 using System.IO;
 
+/*
+ * post build stuff that breaks the build for me
+ * copy "$(TargetDir)$(TargetFileName)" "E:\Installers\Terraria\Codes and Shit\Vharonftw\Plugins"
+ * I dont really have an external drive E :(
+ */
 namespace CustomMonsters
 {
     internal class CustomMonster

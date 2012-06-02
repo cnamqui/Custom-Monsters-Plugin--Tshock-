@@ -23,3 +23,15 @@ E:\Installers\Terraria\Codes and Shit\Tshock Debug\ServerPlugins\CustomMonsters.
 E:\Installers\Terraria\Codes and Shit\Vharonftw\Custom Monster Plugin\CustomMonsterPlugin\obj\Debug\ResolveAssemblyReference.cache
 E:\Installers\Terraria\Codes and Shit\Vharonftw\Custom Monster Plugin\CustomMonsterPlugin\obj\Debug\CustomMonsters.dll
 E:\Installers\Terraria\Codes and Shit\Vharonftw\Custom Monster Plugin\CustomMonsterPlugin\obj\Debug\CustomMonsters.pdb
+C:\Users\Virus\Tshock Debug\ServerPlugins\CustomMonsters.dll
+C:\Users\Virus\Tshock Debug\ServerPlugins\CustomMonsters.pdb
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\obj\Debug\CustomMonsters.dll
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\obj\Debug\CustomMonsters.pdb
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\CustomMonsters.dll
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\CustomMonsters.pdb
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\TerrariaServer.exe
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\TShockAPI.dll
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\HttpServer.dll
+C:\Users\Virus\git\TShock Plugins\Custom-Monsters-Plugin--Tshock-\bin\Debug\CustomMonsters.dll.config
