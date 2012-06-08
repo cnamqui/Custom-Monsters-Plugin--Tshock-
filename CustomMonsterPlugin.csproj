@@ -31,14 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data">
-      <HintPath>..\..\References\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Web">
-      <HintPath>..\..\References\MySql.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.0.2.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Newtonsoft.Json">
       <HintPath>DLL\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -54,7 +47,7 @@
       <ExecutableExtension>.exe</ExecutableExtension>
       <HintPath>DLL\TerrariaServer.exe</HintPath>
     </Reference>
-    <Reference Include="TShockAPI, Version=3.8.0.304, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="TShockAPI, Version=3.9.0.526, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\TShockAPI.dll</HintPath>
     </Reference>

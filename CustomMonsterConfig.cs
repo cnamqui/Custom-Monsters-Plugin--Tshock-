@@ -8,7 +8,7 @@ using Hooks;
 using TShockAPI;
 using TShockAPI.DB;
 using System.ComponentModel;
-using MySql.Data.MySqlClient;
+
 using System.Text;
 using Newtonsoft.Json;
 

@@ -6,13 +6,12 @@ using Hooks;
 using TShockAPI;
 using TShockAPI.DB;
 using System.ComponentModel;
-using MySql.Data.MySqlClient;
 using System.IO;
 using System.Reflection;
 
 namespace CustomMonsters
 {
-    [APIVersion(1, 11)]
+    [APIVersion(1, 12)]
     public class CustomMonstersPlugin : TerrariaPlugin
     {
         private static CustomMonsterConfigFile CMConfig { get; set; }
@@ -441,6 +440,10 @@ namespace CustomMonsters
         private static void CBlitz(float X, float Y, int blitzstyle, string SCMType)
         {
             CustomMonsterType CMType = CMTypes.Find(cmt => cmt.Name == SCMType);
+            if( CMType == null )
+            {
+                Log.ConsoleError("The cmtype could not be found\n");
+            }
             if (blitzstyle > 0)
             {
                 List<ShotTile> BlitzGrid = new List<ShotTile>();
@@ -1023,7 +1026,7 @@ namespace CustomMonsters
                                         if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out MODML))
                                         {
                                             CMType.MODMaxLevel = MODML;
-                                            CMType.MultiplyOnDeath = false;
+                                            CMType.MultiplyOnDeath = true;
                                         }
 
                                         break;
