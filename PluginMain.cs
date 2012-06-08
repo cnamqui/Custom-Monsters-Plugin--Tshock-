@@ -782,91 +782,98 @@ namespace CustomMonsters
 
         private static void LoadCustomMonstersFromText()
         {
-
-            string[] CustomMonstersDataPaths = Directory.GetFiles(@CustomMonstersDataDirectory);
-
-            foreach (string CMDataPath in CustomMonstersDataPaths)
+            string[] dirs = Directory.GetDirectories(@CustomMonstersDataDirectory);
+            foreach (string dir in dirs)
             {
-                List<string> MonsterData = new List<string>();
-                try
+                string[] CustomMonstersDataPaths = Directory.GetFiles(dir);
+
+                foreach (string CMDataPath in CustomMonstersDataPaths)
                 {
-                    using (StreamReader sr = new StreamReader(CMDataPath))
+                    List<string> MonsterData = new List<string>();
+                    try
                     {
-                        string line;
-                        while ((line = sr.ReadLine()) != null)
+                        using (StreamReader sr = new StreamReader(CMDataPath))
                         {
-                            if (!line.StartsWith("##"))
-                                MonsterData.Add(line);
+                            string line;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                if (!line.StartsWith("##"))
+                                    MonsterData.Add(line);
+                            }
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    string errormessage = string.Format("The file \"{0}\" could not be read:", CMDataPath);
-                    Console.WriteLine(errormessage);
-                    Console.WriteLine(e.Message);
-                }
-                CustomMonsterType CMType = new CustomMonsterType();
-
-                foreach (string CMFieldAndVal in MonsterData)
-                {
-                    if (CMFieldAndVal.Split(':').Length > 1)
+                    catch (Exception e)
                     {
-                        #region donator version switch block
-                        switch (CMFieldAndVal.Split(':')[0].ToLower())
+                        string errormessage = string.Format("The file \"{0}\" could not be read:", CMDataPath);
+                        Console.WriteLine(errormessage);
+                        Console.WriteLine(e.Message);
+                    }
+                    CustomMonsterType CMType = new CustomMonsterType();
+
+                    foreach (string CMFieldAndVal in MonsterData)
+                    {
+                        if (CMFieldAndVal.Split(':').Length > 1)
                         {
-                            case "name":
-                                {
-                                    CMType.Name = CMFieldAndVal.Split(':')[1];
-                                    break;
-                                }
-                            case "basetype":
-                            case "type":
-                                {
-                                    int type;
-                                    Int32.TryParse(CMFieldAndVal.Split(':')[1], out type);
-                                    CMType.BaseType = type;
-                                    break;
-                                }
-                            case "life":
-                            case "lifemax":
+                            #region donator version switch block
+
+                            switch (CMFieldAndVal.Split(':')[0].ToLower())
+                            {
+                                case "name":
+                                    {
+                                        CMType.Name = CMFieldAndVal.Split(':')[1];
+                                        break;
+                                    }
+                                case "basetype":
+                                case "type":
+                                    {
+                                        int type;
+                                        Int32.TryParse(CMFieldAndVal.Split(':')[1], out type);
+                                        CMType.BaseType = type;
+                                        break;
+                                    }
+                                case "life":
+                                case "lifemax":
                                     {
                                         int life;
                                         Int32.TryParse(CMFieldAndVal.Split(':')[1], out life);
                                         CMType.Life = life;
                                         break;
                                     }
-                            case "blitzdata":
-                            case "blitz":
+                                case "blitzdata":
+                                case "blitz":
                                     {
                                         int type;
                                         int style;
                                         int time;
                                         if (CMFieldAndVal.Split(':').Length > 3)
                                         {
-                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out type) && Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) && Int32.TryParse(CMFieldAndVal.Split(':')[3], out time))
+                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out type) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[3], out time))
                                             {
                                                 CMType.BlitzData.Add(new BlitzData(type, style, time));
                                             }
                                         }
                                         break;
                                     }
-                            case "cblitzdata":
-                            case "cblitz":
+                                case "cblitzdata":
+                                case "cblitz":
                                     {
                                         int style;
                                         int time;
                                         if (CMFieldAndVal.Split(':').Length > 3)
                                         {
-                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) && Int32.TryParse(CMFieldAndVal.Split(':')[3], out time))
+                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[3], out time))
                                             {
-                                                CMType.CBlitzData.Add(new CBlitzData(CMFieldAndVal.Split(':')[0], style, time));
+                                                CMType.CBlitzData.Add(new CBlitzData(CMFieldAndVal.Split(':')[0], style,
+                                                                                     time));
                                             }
                                         }
                                         break;
                                     }
-                            case "shooterdata":
-                            case "shooter":
+                                case "shooterdata":
+                                case "shooter":
                                     {
                                         int type;
                                         int style;
@@ -874,19 +881,22 @@ namespace CustomMonsters
                                         int damage;
                                         if (CMFieldAndVal.Split(':').Length > 4)
                                         {
-                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out type) && Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) && Int32.TryParse(CMFieldAndVal.Split(':')[3], out time) && Int32.TryParse(CMFieldAndVal.Split(':')[4], out damage))
+                                            if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out type) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[3], out time) &&
+                                                Int32.TryParse(CMFieldAndVal.Split(':')[4], out damage))
                                             {
                                                 CMType.ShooterData.Add(new ShooterData(type, damage, style, time));
                                             }
                                         }
                                         break;
                                     }
-                            case "buff":
+                                case "buff":
                                     {
                                         int type;
                                         int time = 5;
                                         int rate = 10;
-                                        
+
                                         if (CMFieldAndVal.Split(':').Length > 1)
                                         {
                                             if (CMFieldAndVal.Split(':').Length > 2)
@@ -902,10 +912,10 @@ namespace CustomMonsters
                                     }
                                 case "corruption":
                                     {
-                                        int rate=10;
+                                        int rate = 10;
                                         Int32.TryParse(CMFieldAndVal.Split(':')[1], out rate);
                                         CMType.Corruption.SpawnHere = true;
-                                        CMType.Corruption.Rate = rate;                                        
+                                        CMType.Corruption.Rate = rate;
                                         break;
                                     }
                                 case "meteor":
@@ -948,26 +958,30 @@ namespace CustomMonsters
                                         CMType.Forest.Rate = rate;
                                         break;
                                     }
-                            case "region":
+                                case "region":
                                     {
                                         if (CMFieldAndVal.Split(':').Length > 5)
                                         {
-                                            Region spawnregion = TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
+                                            Region spawnregion =
+                                                TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
                                             int spawnrate;
                                             if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out spawnrate))
                                             {
                                                 int spawnchance = 1;
-                                                int maxspawns =5;
+                                                int maxspawns = 5;
                                                 bool staticspawnrate = false;
                                                 Int32.TryParse(CMFieldAndVal.Split(':')[3], out maxspawns);
                                                 Int32.TryParse(CMFieldAndVal.Split(':')[4], out spawnchance);
                                                 bool.TryParse(CMFieldAndVal.Split(':')[5], out staticspawnrate);
-                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate, maxspawns, spawnchance, staticspawnrate));
+                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate,
+                                                                                          maxspawns,
+                                                                                          spawnchance, staticspawnrate));
                                             }
                                         }
                                         else if (CMFieldAndVal.Split(':').Length > 4)
                                         {
-                                            Region spawnregion = TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
+                                            Region spawnregion =
+                                                TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
                                             int spawnrate;
                                             if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out spawnrate))
                                             {
@@ -975,23 +989,28 @@ namespace CustomMonsters
                                                 int maxspawns = 5;
                                                 Int32.TryParse(CMFieldAndVal.Split(':')[3], out maxspawns);
                                                 Int32.TryParse(CMFieldAndVal.Split(':')[4], out spawnchance);
-                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate, maxspawns, spawnchance));
+                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate,
+                                                                                          maxspawns,
+                                                                                          spawnchance));
                                             }
                                         }
                                         else if (CMFieldAndVal.Split(':').Length > 3)
                                         {
-                                            Region spawnregion = TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
+                                            Region spawnregion =
+                                                TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
                                             int spawnrate;
                                             if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out spawnrate))
                                             {
                                                 int maxspawns = 5;
                                                 Int32.TryParse(CMFieldAndVal.Split(':')[3], out maxspawns);
-                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate, maxspawns));
+                                                CMType.SpawnRegions.Add(new RegionAndRate(spawnregion, spawnrate,
+                                                                                          maxspawns));
                                             }
                                         }
                                         else if (CMFieldAndVal.Split(':').Length > 2)
                                         {
-                                            Region spawnregion = TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
+                                            Region spawnregion =
+                                                TShock.Regions.GetRegionByName(CMFieldAndVal.Split(':')[1]);
                                             int spawnrate;
                                             if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out spawnrate))
                                             {
@@ -1000,8 +1019,8 @@ namespace CustomMonsters
                                         }
                                         break;
                                     }
-                            case "replace":
-                            case "replaces":
+                                case "replace":
+                                case "replaces":
                                     {
                                         if (TShock.Utils.GetNPCByIdOrName(CMFieldAndVal.Split(':')[1]).Count == 1)
                                         {
@@ -1010,17 +1029,17 @@ namespace CustomMonsters
                                         }
                                         break;
                                     }
-                            case "ai":
-                            case "customai":
-                            case "customaistyle":
-                            case "aistyle":
+                                case "ai":
+                                case "customai":
+                                case "customaistyle":
+                                case "aistyle":
                                     {
                                         int ai;
-                                        if(Int32.TryParse(CMFieldAndVal.Split(':')[1],out ai))
+                                        if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out ai))
                                             CMType.CustomAIStyle = ai;
                                         break;
                                     }
-                            case "multiplyondeath":
+                                case "multiplyondeath":
                                     {
                                         int MODML;
                                         if (Int32.TryParse(CMFieldAndVal.Split(':')[1], out MODML))
@@ -1031,105 +1050,104 @@ namespace CustomMonsters
 
                                         break;
                                     }
-                            case "transform":
-                            case "transformation":
+                                case "transform":
+                                case "transformation":
                                     {
                                         if (CMFieldAndVal.Split(':').Length > 2)
                                         {
                                             int hp;
                                             if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out hp))
-                                                CMType.Transformation = new Transformation(CMFieldAndVal.Split(':')[1], hp);
+                                                CMType.Transformation = new Transformation(CMFieldAndVal.Split(':')[1],
+                                                                                           hp);
                                         }
                                         break;
                                     }
-                            case "donttakedamage":
+                                case "donttakedamage":
                                     {
                                         bool dtd;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out dtd))
                                             CMType.dontTakeDamage = dtd;
                                         break;
                                     }
-                            case "lavaimmune":
+                                case "lavaimmune":
                                     {
                                         bool lavaimmune;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out lavaimmune))
                                             CMType.lavaImmune = lavaimmune;
                                         break;
                                     }
-                            case "boss":
+                                case "boss":
                                     {
                                         bool boss;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out boss))
                                             CMType.Boss = boss;
                                         break;
                                     }
-                            case "notilecollide":
+                                case "notilecollide":
                                     {
                                         bool noTileCollide;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out noTileCollide))
                                             CMType.noTileCollide = noTileCollide;
                                         break;
                                     }
-                            case "nogravity":
+                                case "nogravity":
                                     {
                                         bool noGravity;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out noGravity))
                                             CMType.noGravity = noGravity;
                                         break;
                                     }
-                            case "value":
+                                case "value":
                                     {
                                         float value;
                                         if (float.TryParse(CMFieldAndVal.Split(':')[1], out value))
                                             CMType.Value = value;
                                         break;
                                     }
-                            //case "spawnmessage":
-                            //        {
-                            //            CMType.SpawnMessage = CMFieldAndVal.Split(':')[1];
-                            //            break;
-                            //        }
-                            case "onfire":
+                                    //case "spawnmessage":
+                                    //        {
+                                    //            CMType.SpawnMessage = CMFieldAndVal.Split(':')[1];
+                                    //            break;
+                                    //        }
+                                case "onfire":
                                     {
                                         bool onfire;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out onfire))
                                             CMType.OnFire = onfire;
                                         break;
                                     }
-                            case "poisoned":
+                                case "poisoned":
                                     {
                                         bool poisoned;
                                         if (bool.TryParse(CMFieldAndVal.Split(':')[1], out poisoned))
                                             CMType.Poisoned = poisoned;
                                         break;
                                     }
-                            default:
-                                CMType.SpawnMessage = CMFieldAndVal;
-                                        break;
+                                default:
+                                    CMType.SpawnMessage = CMFieldAndVal;
+                                    break;
+                            }
                         }
-                    }
-                    #endregion
 
-                }
-                lock (CMTypes)
-                {
-                   
-                    if (CMType.Name != "" && CMType.BaseType != 0){
-		    
-                        if (CMType.Transformation == null)
-		     
-                            CMType.Transformation = new Transformation();
-                        
-                        CMTypes.Add(CMType);
-			
+                        #endregion
+
+                    }
+                    lock (CMTypes)
+                    {
+
+                        if (CMType.Name != "" && CMType.BaseType != 0)
+                        {
+
+                            if (CMType.Transformation == null)
+
+                                CMType.Transformation = new Transformation();
+
+                            CMTypes.Add(CMType);
+
+                        }
                     }
                 }
             }
-
-
-
-
-
         }
 
         private static void LoadAllCustomMonsters()
