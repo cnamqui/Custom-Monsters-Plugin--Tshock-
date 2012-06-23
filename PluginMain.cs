@@ -403,7 +403,7 @@ namespace CustomMonsters
             {
                 foreach (CBlitzData cbd in Cblitzer.CMType.CBlitzData)
                 {
-                    if (((int) (Cblitzer.SpawnTime - DateTime.Now).TotalMilliseconds/100)%(cbd.CBlitzTime) == 0)
+                    if (cbd.CBlitzTime > 0 && (((int)(DateTime.Now - Cblitzer.SpawnTime).TotalMilliseconds % cbd.CBlitzTime) == 0))
                     {
                         CBlitz(Cblitzer.MainNPC.position.X, Cblitzer.MainNPC.position.Y, cbd.CBlitzStyle,
                                cbd.CBlitzerType);
@@ -537,7 +537,9 @@ namespace CustomMonsters
             if (CMType == null)
             {
                 Log.ConsoleError("The cmtype could not be found\n");
+                return;
             }
+
             if (blitzstyle > 0)
             {
                 List<ShotTile> BlitzGrid = new List<ShotTile>();
@@ -1017,7 +1019,7 @@ namespace CustomMonsters
                                 if (Int32.TryParse(CMFieldAndVal.Split(':')[2], out style) &&
                                     Int32.TryParse(CMFieldAndVal.Split(':')[3], out time))
                                 {
-                                    CMType.CBlitzData.Add(new CBlitzData(CMFieldAndVal.Split(':')[0], style,
+                                    CMType.CBlitzData.Add(new CBlitzData(CMFieldAndVal.Split(':')[1], style,
                                                                             time));
                                 }
                             }
