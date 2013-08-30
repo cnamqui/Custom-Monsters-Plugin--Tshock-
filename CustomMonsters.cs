@@ -5,13 +5,21 @@ using Hooks;
 using TShockAPI;
 using TShockAPI.DB;
 using System.ComponentModel;
-using MySql.Data.MySqlClient;
+
 using System.IO;
 
+/*
+ * post build stuff that breaks the build for me
+ * copy "$(TargetDir)$(TargetFileName)" "E:\Installers\Terraria\Codes and Shit\Vharonftw\Plugins"
+ * I dont really have an external drive E :(
+ */
 namespace CustomMonsters
 {
     internal class CustomMonster
     {
+        public DateTime[] LastShot = new DateTime[20];
+        public DateTime[] LastBlitz = new DateTime[20];
+        public DateTime[] LastCblitz = new DateTime[20];
         public int ID { get; set; }
         public CustomMonsterType CMType { get; set; }
         public NPC MainNPC { get { return Main.npc[ID]; } }
@@ -27,21 +35,26 @@ namespace CustomMonsters
             //Customized = true;
         }
     }
-    internal class ZoneAndRate
-    {
-        public int Rate { get; set; }
-        public bool SpawnHere { get; set; }
-        public ZoneAndRate(int rate = 10, bool spawnhere = false)
-        {
-            Rate = rate;
-            SpawnHere = spawnhere;
-        }
-    }
     internal class RegionAndRate
     {
-        public Region SpawnRegion { get; set; }
+        public string SpawnRegion { get; set; }
         public int SpawnRate { get; set; }
         public int SpawnChance { get; set; }
+        public List<CMPlayer> PlayersInRegion
+        {
+            get 
+            {
+                if(TShock.Regions.GetRegionByName(SpawnRegion) != null)
+                {
+                    return CustomMonstersPlugin.CMPlayers.FindAll(ply => TShock.Regions.GetRegionByName(SpawnRegion).InArea(new Rectangle((int)(ply.TSPlayer.TileX), (int)(ply.TSPlayer.TileY), ply.TSPlayer.TPlayer.width, ply.TSPlayer.TPlayer.height)));
+                }
+                else
+                {
+                    Log.ConsoleError("Custom Monsters: Region defined in config does not exist: " + SpawnRegion);
+                    return null;
+                }
+            } 
+        }
         public bool StaticSpawnRate { get; set; }
         public int DefaultMaxSpawns { get; set; }
         public List<NPC> MonstersInRegion
@@ -51,14 +64,22 @@ namespace CustomMonsters
                 List<NPC> TBR = new List<NPC>();
                 for(int i = 0; i< Main.maxNPCs;i++)
                 {
-                    if (SpawnRegion.InArea(Main.npc[i].frame))
-                        TBR.Add(Main.npc[i]);
+                    if(TShock.Regions.GetRegionByName(SpawnRegion) != null)
+                    {
+                        if (Main.npc[i].active)
+                            if (TShock.Regions.GetRegionByName(SpawnRegion).InArea(new Rectangle((int)(Main.npc[i].position.X / 16), (int)(Main.npc[i].position.Y / 16), Main.npc[i].width, Main.npc[i].height)))
+                                TBR.Add(Main.npc[i]);
+                    }
+                    else
+                    {
+                        Log.ConsoleError("Custom Monsters: Region defined in config does not exist: " + SpawnRegion);
+                        return null;
+                    }
                 }
                 return TBR;
             }
         }
         public DateTime LastSpawn { get; set; }
-        public List<CMPlayer> PlayersInRegion { get { return CustomMonstersPlugin.CMPlayers.FindAll(player => SpawnRegion.InArea(player.TSPlayer.TPlayer.bodyFrame)); } }
         public int MaxSpawns
         {
             get
@@ -67,12 +88,18 @@ namespace CustomMonsters
                     return DefaultMaxSpawns;
                 else
                 {
-                    return (PlayersInRegion.Count * DefaultMaxSpawns);
+                    List<CMPlayer> plysInRegion = PlayersInRegion;
+                    if (plysInRegion != null)
+                        return (plysInRegion.Count * DefaultMaxSpawns);
+                    else
+                    {
+                        return 0;
+                    }
                 }
             }
         }
 
-        public RegionAndRate(Region spawnregion, int spawnrate, int maxspawns = 5, int spawnchance = 1, bool staticspawnrate = false)
+        public RegionAndRate(string spawnregion, int spawnrate, int maxspawns = 5, int spawnchance = 1, bool staticspawnrate = false)
         {
             SpawnRegion = spawnregion;
             SpawnRate = spawnrate;
@@ -132,6 +159,32 @@ namespace CustomMonsters
             ShootTime = time;
         }
     }
+    /*internal class ZoneAndRate
+    {
+        public int Rate { get; set; }
+        public bool SpawnHere { get; set; }
+        public ZoneAndRate(int rate = 10, bool spawnhere = false)
+        {
+            Rate = rate;
+            SpawnHere = spawnhere;
+        }
+    }*/
+    internal class BiomeData
+    {
+        internal string biomeName { get; set; }
+        internal int biomeMaxSpawns { get; set; }
+        internal int biomeSpawnChance { get; set; }
+        internal int biomeRate { get; set; }
+        internal bool biomeStaticSpawnRate { get; set; }
+        internal BiomeData(string regionName, int rate, int maxSpawns, int spawnChance, bool staticSpawnRate)
+        {
+            biomeName = regionName;
+            biomeMaxSpawns = maxSpawns;
+            biomeSpawnChance = spawnChance;
+            biomeRate = rate;
+            biomeStaticSpawnRate = staticSpawnRate;
+        }
+    }
     internal class Transformation
     {
         internal string TransformTo { get; set; }
@@ -162,12 +215,13 @@ namespace CustomMonsters
         internal List<ShooterData> ShooterData { get; set; }
         internal List<BuffRateandDuration> Buffs { get; set; }
 
-        internal ZoneAndRate Corruption { get; set; }
+        internal List<BiomeData> BiomeData { get; set; }
+        /*internal ZoneAndRate Corruption { get; set; }
         internal ZoneAndRate Jungle { get; set; }
         internal ZoneAndRate Meteor { get; set; }
         internal ZoneAndRate Dungeon { get; set; }
         internal ZoneAndRate Hallow { get; set; }
-        internal ZoneAndRate Forest { get; set; }
+        internal ZoneAndRate Forest { get; set; }*/
         internal List<RegionAndRate> SpawnRegions { get; set; }
         internal List<NPC> Replaces { get; set; }
 
@@ -198,12 +252,13 @@ namespace CustomMonsters
             ShooterData = new List<ShooterData>();
             Buffs = new List<BuffRateandDuration>();
 
-            Corruption = new ZoneAndRate();
+            BiomeData = new List<BiomeData>();
+            /*Corruption = new ZoneAndRate();
             Jungle = new ZoneAndRate();
             Meteor = new ZoneAndRate();
             Dungeon = new ZoneAndRate();
             Hallow = new ZoneAndRate();
-            Forest = new ZoneAndRate();
+            Forest = new ZoneAndRate();*/
 
             Transformation = new Transformation();
 
